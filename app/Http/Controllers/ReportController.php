@@ -13,7 +13,6 @@ class ReportController extends Controller
 
     public function index()
     {
-        // 1. Sales by Product
         $products = Product::all();
         $salesByProduct = [];
         foreach ($products as $product) {
@@ -23,10 +22,8 @@ class ReportController extends Controller
                 'total_sold' => $totalSold,
             ];
 
-            // This assumes salesDetails relation on Product model
         }
 
-        // 2. Revenue and Expenses by Month
         $sales = Sales::whereYear('created_at', Carbon::now()->year)->get();
         $revenueData = [];
         $expenseData = [];
@@ -36,7 +33,6 @@ class ReportController extends Controller
             $month = Carbon::parse($sale->created_at)->format('F');
             $revenueData[$month] = ($revenueData[$month] ?? 0) + $sale->total;
 
-            // Calculate Expenses
             $saleDetails = $sale->details;
             foreach ($saleDetails as $detail) {
                 $expenseData[$month] = ($expenseData[$month] ?? 0) + ($detail->cost_price * $detail->quantity);
@@ -47,7 +43,6 @@ class ReportController extends Controller
             }
         }
 
-        // Sorting months in chronological order
         sort($months);
 
         $revenues = [];
@@ -57,7 +52,6 @@ class ReportController extends Controller
             $expenses[] = $expenseData[$month] ?? 0;
         }
 
-        // 3. Sales by Salesperson (Assuming the `sales_by` field is a foreign key to the Cashier model)
         $salesBySalesperson = Sales::selectRaw('sales_by, sum(total) as total_sales')
             ->groupBy('sales_by')
             ->get();
@@ -68,7 +62,6 @@ class ReportController extends Controller
                 'total_sales' => $sale->total_sales,
             ];
 
-            // Assuming you can relate salesperson data directly via sales_by
         }
 
         return inertia('Dashboard/Report/Index', [

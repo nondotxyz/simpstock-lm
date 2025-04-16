@@ -18,9 +18,9 @@ class StocksController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'name' => 'required|string',
-            'price' => 'required',
-            'stock' => 'required',
+            'name' => 'required|string|max:255',
+            'price' => 'required|integer|min:1',
+            'stock' => 'required|integer|min:1',
         ]);
 
         $product = Product::create($validated);
@@ -45,8 +45,8 @@ class StocksController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'price' => 'required|numeric|min:0',
-            'stock' => 'required|integer|min:0',
+            'price' => 'required|integer|min:1',
+            'stock' => 'required|integer|min:1',
         ]);
 
         $originalStock = $product->stock;
