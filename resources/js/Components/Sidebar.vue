@@ -29,5 +29,13 @@ import { Link } from "@inertiajs/vue3"
             Report
         </div>
         </Link>
+        <Link :href="route('admin.login')">
+
+        <div class="flex items-center text-lg">
+            <i-material-symbols:admin-panel-settings-rounded
+                class="mr-2"></i-material-symbols:admin-panel-settings-rounded>
+            Admin
+        </div>
+        </Link>
     </div>
 </template>

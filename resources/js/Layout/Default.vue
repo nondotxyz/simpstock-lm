@@ -5,11 +5,21 @@ import Sidebar from '@/Components/Sidebar.vue';
 import Toast from '@/Components/Toast.vue';
 
 const page = usePage();
-const errors = ref([]);
+const errorToasts = ref({});
 
 watch(() => page.props.errors, (newErrors) => {
-    errors.value = Object.values(newErrors);
-});
+    Object.keys(errorToasts.value).forEach(field => {
+        if (!(field in newErrors)) {
+            errorToasts.value[field] = false;
+        }
+    });
+
+    Object.keys(newErrors).forEach(field => {
+        if (!errorToasts.value[field]) {
+            errorToasts.value[field] = true;
+        }
+    });
+}, { deep: true });
 </script>
 
 <template>
@@ -20,7 +30,8 @@ watch(() => page.props.errors, (newErrors) => {
         </div>
 
         <div class="fixed top-4 right-4 z-50 flex flex-col gap-2">
-            <Toast v-for="(error, i) in errors" :key="i" :message="error" />
+            <Toast v-for="(message, field) in page.props.errors" :key="field" :message="message"
+                v-model:show="errorToasts[field]" :duration="5000" />
         </div>
     </div>
 </template>
